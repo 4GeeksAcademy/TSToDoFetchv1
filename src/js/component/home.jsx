@@ -1,39 +1,47 @@
-import React, { useState } from 'react';
-// import './../styles/index.css'; // Import the provided CSS file
+import React, { useState, useEffect } from 'react';
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
-  const apiUrl= https://playground.4geeks.com/apis/fake/todos/user/TS06
-  const add apiUrl
-  const update apiUrl
-  const delete apiUrl
+  const apiUrl = "https://playground.4geeks.com/apis/fake/todos/user/TS06";
 
-  fetch(apiUrl, {
+  const update = (newList) => {
+    fetch(apiUrl, {
       method: "PUT",
-      body: JSON.stringify(todos),
+      body: JSON.stringify(newList),
       headers: {
         "Content-Type": "application/json"
       }
     })
-    .then(resp => {
-        console.log(resp.ok); // will be true if the response is successfull
-        console.log(resp.status); // the status code = 200 or code = 400 etc.
-        console.log(resp.text()); // will try return the exact result as string
-        return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
-    })
-    .then(data => {
-        //here is where your code should start after the fetch finishes
-        console.log(data); //this will print on the console the exact object received from the server
-    })
-    .catch(error => {
-        //error handling
+      .then(resp => {
+        console.log(resp.ok);
+        console.log(resp.status);
+        console.log(resp.text());
+        return resp.json();
+      })
+      .then(data => {
+        console.log(data);
+      })
+      .catch(error => {
         console.log(error);
-    });
+      });
+  };
+
+  const get = () => {
+    fetch(apiUrl)
+      .then((resp) => resp.json())
+      .then((data) => setTasks(data));
+  };
+
+  useEffect(() => {
+    get();
+  }, []);
 
   const handleAddTask = () => {
     if (newTask.trim() !== '') {
-      setTasks([...tasks, newTask]);
+      const newTasks = [...tasks, { "label": newTask, "done": false }];
+      setTasks(newTasks);
+      update(newTasks);
       setNewTask('');
     }
   };
@@ -41,7 +49,10 @@ function App() {
   const handleDeleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
+    update(updatedTasks);
   };
+
+  console.log(tasks);
 
   return (
     <div className="App">
@@ -58,27 +69,27 @@ function App() {
             }
           }}
         />
-      <div>  
-        <button onClick={handleAddTask}>Add</button>
-        {tasks.length === 0 ? (
-          <div className="no-tasks">No tasks, add a task</div>
-        ) : (
-          <ul>
-            {tasks.map((task, index) => (
-              <li key={index} onMousePress={() => handleDeleteTask(index)}>
-                {task}
-                <span
-                  className="delete-icon"
-                  onClick={() => handleDeleteTask(index)}
-                >
-                  &#10006;
-                </span>
-              </li>
-            ))}
-            <div className='task-length'> items left {tasks.length}</div>
-          </ul>
-        )}
-      </div>  
+        <div>
+          <button onClick={handleAddTask}>Add</button>
+          {tasks.length === 0 ? (
+            <div className="no-tasks">No tasks, add a task</div>
+          ) : (
+            <ul>
+              {tasks.map((task, index) => (
+                <li key={index} onClick={() => handleDeleteTask(index)}>
+                  {task.label}
+                  <span
+                    className="delete-icon"
+                    onClick={() => handleDeleteTask(index)}
+                  >
+                    &#10006;
+                  </span>
+                </li>
+              ))}
+              <div className='task-length'> items left {tasks.length}</div>
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
