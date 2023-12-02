@@ -36,6 +36,7 @@ function App() {
   useEffect(() => {
     get();
   }, []);
+     
 
   const handleAddTask = () => {
     if (newTask.trim() !== '') {
@@ -52,6 +53,26 @@ function App() {
     update(updatedTasks);
   };
 
+  const handleCleanAllTasks = () => {
+    // Send a DELETE request to the server to delete all tasks
+    const deleteAll=tasks = [...tasks, { "label": newTask, "done": false }]
+    console.log (deleteAll)
+
+    fetch(apiUrl, {
+      method: "PUT",
+      body: JSON.stringify(tasks),
+      headers: {
+        "Content-Type": "application/json"
+    }})
+      .then((resp) => {
+        // Update the front-end with an empty task list
+        resp.status === 200 ? 
+        setTasks(deleteAll):""
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
   console.log(tasks);
 
   return (
@@ -71,6 +92,7 @@ function App() {
         />
         <div>
           <button onClick={handleAddTask}>Add</button>
+          <button onClick={handleCleanAllTasks}>Delete</button>
           {tasks.length === 0 ? (
             <div className="no-tasks">No tasks, add a task</div>
           ) : (
@@ -85,6 +107,7 @@ function App() {
                     &#10006;
                   </span>
                 </li>
+
               ))}
               <div className='task-length'> items left {tasks.length}</div>
             </ul>
