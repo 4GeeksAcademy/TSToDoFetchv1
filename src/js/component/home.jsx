@@ -5,6 +5,7 @@ function App() {
   const [newTask, setNewTask] = useState('');
   const apiUrl = "https://playground.4geeks.com/apis/fake/todos/user/TS06";
 
+
   const update = (newList) => {
     fetch(apiUrl, {
       method: "PUT",
@@ -55,7 +56,7 @@ function App() {
 
   const handleCleanAllTasks = () => {
     // Send a DELETE request to the server to delete all tasks
-    const deleteAll=tasks = [...tasks, { "label": newTask, "done": false }]
+    const deleteAll= [ { "label": "add New Task", "done": false }]
     console.log (deleteAll)
 
     fetch(apiUrl, {
